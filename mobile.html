@@ -1,0 +1,64 @@
+<!DOCTYPE html> 
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aero Weather for SmartPhone</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script>
+      function ValidateForm() {
+        var country = document.forms["form"]["country"].value;
+        var airport = document.forms["form"]["airport"].value;
+        if (country == "" && airport == "") {
+          alert("Please, specify the country code(s) or the airport code(s)");
+          return false;
+        } else
+          return true;
+      }
+    </script>
+  </head>
+
+  <body>
+    <header class="w3-container w3-blue-grey">
+      <h2>Aviation weather</h2>
+    </header>
+    <form name="form" class="w3-container" action="wsaero.php" onsubmit="return ValidateForm()" method="get" autocomplete="off">
+      <p>
+        <label class="w3-text-blue-grey">Country code <span class="w3-badge w3-tiny w3-blue-grey"><a href="help_country.html">?</a></span></label>
+        <input class="w3-input" style="text-transform: uppercase" type="text" name="country" placeholder="2-character country code" autofocus/>
+      </p>
+      <p>
+        <label class="w3-text-blue-grey">Airport code <span class="w3-badge w3-tiny w3-blue-grey"><a href="help_airport.html">?</a></span></label>
+        <input class="w3-input" style="text-transform: uppercase" type="text" name="airport"/>
+      </p>
+      <p>
+        <label class="w3-text-blue-grey">Nautical miles radius <span class="w3-badge w3-tiny w3-blue-grey"><a href="help_radius.html">?</a></span></label>
+        <input class="w3-input" type="number" name="radius" step="10"/>
+      </p>
+      <p>
+        <label class="w3-text-blue-grey">History</label>
+        <select name="history" class="w3-select">
+		<option value="0" selected="selected">Most recent</option>
+		<option value="3">Last 3 hours</option>
+		<option value="6">Last 6 hours</option>
+		<option value="12">Last 12 hours</option>
+	</select>
+      </p>
+      <p>
+        <label class="w3-text-blue-grey">Output <span class="w3-badge w3-tiny w3-blue-grey"><a href="help_output.html">?</a></span></label>
+        <select name="output" class="w3-select">
+		<option value="HTML" selected="selected">HTML</option>
+		<option value="RSS">RSS</option>
+                <option value="KML">KML</option>>
+		<option value="">XML</option>
+	</select>
+      </p>
+      <p>
+        <input type="submit" value="Submit" />
+      </p>
+    </form>
+    <footer class="w3-container w3-blue-grey">
+      <h5>Developped by Robin Alexander</h5>
+    </footer>
+  </body>
+</html> 

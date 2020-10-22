@@ -1,0 +1,40 @@
+results {
+font-family: Arial, sans-serif;
+}
+
+airport {
+display: block;
+background-color: silver;
+margin: 10px;
+padding: 10px;
+}
+
+icao, name {
+display: inline-block;
+padding-right: 5px;
+font-weight: bold;
+}
+
+latitude, longitude {
+display: none;
+}
+
+metar, taf {
+display: block;
+}
+
+[flight_cat=VFR] {
+color: green;
+}
+
+[flight_cat=MVFR] {
+color: blue;
+}
+
+[flight_cat=IFR] {
+color: red;
+}
+
+[flight_cat=LIFR] {
+color: magenta;
+}
