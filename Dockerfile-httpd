@@ -1,7 +1,7 @@
+FROM php:7.2-apache
+
 LABEL maintainer="colisee@hotmail.com"
 LABEL description="wsaero: Aviation Weather"
-
-FROM php:7.2-apache
 
 # Install the php module for xsl
 RUN apt-get update && apt-get install -y \
