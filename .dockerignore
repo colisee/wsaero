@@ -1,0 +1,6 @@
+# Files to be ignored when creating the wsaero-vol data volume
+.dockerignore
+.gitignore
+.git/*
+Dockerfile*
+test*
