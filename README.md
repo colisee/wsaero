@@ -7,17 +7,17 @@ Actually, wsaero is my self-educational project aiming at expanding my professio
 ## Pre-requisites
 You have the choice of running wsaero through a web server stack on your OS or running wsaero using the docker framework; the latter being the easiest method.
 ### Standard (the hard way)
-1. web server capable of serving php scripts
-2. php installed with the xsl extension
+* web server capable of serving php scripts
+* php installed with the xsl module
 
 ### Docker (the easy way)
-1. Make sure that docker is installed and running
+* docker installed and running (ex: `sudo systemctl start docker` on a typical debian OS)
   
 ## Installation
 ### Standard
-1. Install a web server stack, php and the xsl module (included in the php-xml on a typical debian OS)
-2. Go into your web server root directory (ex: /var/www/html on a typical debian OS)
-3. Clone the project file content with the command line `git clone https://github.com/colisee/wsaero`
+1. Install a web server stack, php and the xsl module (included in the php-xml packlage on a typical debian OS)
+2. Go to your web server root directory (ex: /var/www/html on a typical debian OS)
+3. Clone the project file content with the command `git clone https://github.com/colisee/wsaero`
 
 ### Docker
 You have the choice of running wsaero in 2 ways: with 1 or 2 containers. The former being very easy to run while the latter better conforming to the micro-service concepts.
@@ -38,7 +38,6 @@ docker pull colisee/wsaero:httpd-latest
 * Point your web browser to http://your_host/wsaero/
 
 ### Docker
-* Start your docker service if not enabled (ex: `sudo systemctl start docker`on a typical debian OS)
 * Launch the container with the following command(s), depending on whether you have 1 or 2 containers
 * Point your web browser to http://your_host/
 #### One container
@@ -49,7 +48,7 @@ docker run --name colisee-wsaero -p 80:80 -d colisee/wsaero:latest
 ```
 #### Two containers
 ```
-docker run --name colisee-wsaero-app --mount type=volume,source=wsaero-col,target=/wsaero -d colisee/wsaero:app-latest
+docker run --name colisee-wsaero-app --mount type=volume,source=wsaero-vol,target=/wsaero -d colisee/wsaero:app-latest
 docker run --name colisee-wsaero-httpd -p 80:80 --mount type=volume,source=wsaero-vol,target=/var/www/html -d colisee/wsaero:httpd-latest
 ```
 
