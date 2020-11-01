@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install -j$(nproc) xsl
 
 # Copy wsaero content
-COPY --chown=www-data:www-data App/ /var/www/html/
+COPY --chown=www-data:www-data App /var/www/html/

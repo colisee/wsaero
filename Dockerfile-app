@@ -4,4 +4,4 @@ LABEL maintainer="colisee@hotmail.com"
 LABEL description="wsaero: Aviation Weather"
 
 # Copy wsaero content
-COPY --chown=www-data:www-data App/ /var/www/html/
+COPY --chown=www-data:www-data App /wsaero/
