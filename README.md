@@ -17,7 +17,7 @@ You have the choice of running wsaero through a web server stack on your OS or r
 ### Standard
 1. Install a web server stack, php and the xsl module (included in the php-xml packlage on a typical debian OS)
 2. Go to your web server root directory (ex: /var/www/html on a typical debian OS)
-3. Clone the project file content with the command `git clone https://github.com/colisee/wsaero`
+3. Clone the project file content with the command `https://github.com/colisee/wsaero.git`
 
 ### Docker
 You have the choice of running wsaero in 2 ways: with 1 or 2 containers. The former being very easy to run while the latter better conforming to the micro-service concepts.
