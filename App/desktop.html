@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <html style="height:100%">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="keywords" content="wsaero, metar, taf, weather, aviation, Robin Alexander" />
-    <meta name="description" content="Get aviation weather reports">
+    <meta name="description" content="Get aviation weather reports" />
     <title>Aero Weather</title>
 
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-	  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
 	  
-	<!-- Make sure you put this AFTER Leaflet's CSS -->
- 	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-	  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin="">
-	</script>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin="">
+    </script>
 
     <!-- Bring in the leaflet KML plugin -->
-    <script src="http://harrywood.co.uk/maps/examples/leaflet/leaflet-plugins/layer/vector/KML.js"></script>  
+    <script src="http://harrywood.co.uk/maps/examples/leaflet/leaflet-plugins/layer/vector/KML.js">
+    </script>
 
     <script src="http://www.geoplugin.net/javascript.gp">
     </script>
-
   </head> 
 
   <body onload="Load()" style="height:100%"> 
 
     <div style="height:5%">
       <form id="myForm">
-		<label for="country"><a href="countrycodes.html">Country code</a>:&nbsp;</label>
-		<input type="text" name="country" id="country" size="2" style=' -wap-input-format: "*A"' />
-		<label for="airport">&nbsp;ICAO code:&nbsp;</label>
-		<input type="text" name="airport" id="airport" size="4" style=' -wap-input-format: "*A"' />
-		<label for="radius">&nbsp;Miles radius:&nbsp;</label>
-		<input type="text" name="radius" id="radius" size="3" style=' -wap-input-format: "*N"' />
-		&nbsp;&nbsp;
-		<input type="button" id="showOnMap" value="Show on map" onClick="ShowOnMap();" />
-		<input type="button" id="showAsText" value="Show as text" onClick="ShowAsText();" />
-		&nbsp;&nbsp;<a href="wsaerohelp_full.html">Help</a>
+        <input type="button" id="showAsText" value="Show as text" onClick="ShowAsText();" />
       </form>
     </div>
 
@@ -45,116 +36,76 @@
 
     <script type="text/javascript"> 
 
-	var thisUrl;
-	var map;
-	var form;
-	var kmlLayer = null;
-	
-    function Load() { 
-
-      thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
-      form = document.getElementById("myForm");   
-      form.reset();   
-
-	  lon = geoplugin_longitude();
-	  lat = geoplugin_latitude();
-
-	  map = L.map('wsMap');
-	  map.on('zoomend dragend', AddKmlLayer);
-      
-	  map.setView([lat, lon], 9);
-	  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Weather data &copy; <a href="http://weather.aero">@viation digital data service</a>, Geolocation &copy; <a href="http://www.geoplugin.com">Geoplugin</a>',
-		maxZoom: 11
-	  }).addTo(map);
-	  L.control.scale().addTo(map);
-
-    } 
+    var thisUrl;
+    var map;
+    var kmlLayer = null;
 
     function IsZoomCompatible() {
 
-      // country specified => disregard the zoom value
-      if (document.getElementById("country").value != '') {
-		return 1;
-      }
-      // country nor specified => the zoom level must be greater than 6
-      else {
-		return(map.getZoom() > 6)?1:0;
-      }
+      return(map.getZoom() > 6)?1:0;
+
     }
 
     function BuildUrl(base) {
 
-      // Get input values
-      var country = document.getElementById("country").value;
-      var airport = document.getElementById("airport").value;
-      var radius = document.getElementById("radius").value;
+      // Get the map viewport coordinates
+      var viewport = map.getBounds();
+      minLat = viewport.getSouth();
+      maxLat = viewport.getNorth();
+      minLon = viewport.getWest();
+      maxLon = viewport.getEast();
 
-      // Country was specified
-      if (country.length > 0) {
-         url = base + '&country=' + country;
-      }
-
-      // Airport was specified
-      else if (airport.length > 0) {
-         url = base + '&airport=' + airport;
-         // Radius was specified
-         if (radius.length > 0) {
-		url = url + '&radius=' + radius;
-         }
-      }
-
-      // no country nor airport specified - use the map viewport
-      else {
-         var viewport = map.getBounds();
-         minLat = viewport.getSouth();
-         maxLat = viewport.getNorth();
-         minLon = viewport.getWest();
-         maxLon = viewport.getEast();
-         url = base + '&minLat=' + minLat + '&minLon=' + minLon + '&maxLat=' + maxLat + '&maxLon=' + maxLon;
-      }
-
-      return(url);
+      return(base + '&minLat=' + minLat + '&minLon=' + minLon + '&maxLat=' + maxLat + '&maxLon=' + maxLon);
 
     }
 
-	function AddKmlLayer(e) {
+    function AddKmlLayer(e) {
 
-		if (map.hasLayer(kmlLayer)) {
-			map.removeLayer(kmlLayer);
-			kmlLayer = null;
-		}
-		
-//		if (IsZoomCompatible()) {
-			kmlLayer = new L.KML(BuildUrl(thisUrl + '/wsaero.php?output=KML'), {async: true});
-			map.addLayer(kmlLayer);
-			map.fitBounds(kmlLayer.getBounds());
-			map.on('zoomend', AddKmlLayer);
-//			kmlLayer.on('loaded', function(e) { 
-//				map.fitBounds(e.target.getBounds());
-//				map.on('zoomend', AddKmlLayer);
-//			});
-//		}
-	}
-	
-    function ShowOnMap() { 
+      // Delete a previous layer if it exists
+      if (map.hasLayer(kmlLayer)) {
+        map.removeLayer(kmlLayer);
+        kmlLayer = null;
+      }
 
-		map.off('zoomend');
-		map.fire('dragend');
-		form.reset();
+      if (IsZoomCompatible()) {
+        kmlLayer = new L.KML(BuildUrl(thisUrl + '/wsaero.php?output=KML'), {async: true});
+        map.addLayer(kmlLayer);
+	  	}
+    }
+
+    function Load() {
+
+      thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
+
+      // Get current geographical coordinates
+      lon = geoplugin_longitude();
+      lat = geoplugin_latitude();
+
+      // Set the leaflet map environment
+      map = L.map('wsMap');
+      map.setView([lat, lon], 9);
+      L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Weather data &copy; <a href="http://weather.aero">@viation digital data service</a>, Geolocation &copy; <a href="http://www.geoplugin.com">Geoplugin</a>',
+        maxZoom: 11}).addTo(map);
+      L.control.scale().addTo(map);
+      map.on('zoomend dragend', AddKmlLayer);
+
+      // Display results on the map by firing the 'dragend' event
+      map.fire('dragend');
+
     }
 
     function ShowAsText() {
 
-	// Do not use a variable named history as it is the browser history object
-	listUrl = BuildUrl(thisUrl + '/wsaero.php?output=HTML');
+    // Do not use a variable named history as it is the browser history object
+    listUrl = BuildUrl(thisUrl + '/wsaero.php?output=HTML');
 
-	// Open a new window
-	window.open(listUrl);
-	form.reset();
+    // Open a new window to display the result as HTML/text
+    window.open(listUrl);
+
     }
- 
-    </script> 
+
+    </script>
 
   </body>
 </html>

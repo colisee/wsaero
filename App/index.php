@@ -7,7 +7,7 @@ if (stristr($agent,'android')) {
 } elseif (stristr($agent,'iphone')) {
       header('Location: mobile.html');
   } else {
-      header('Location: mobile.html');
+      header('Location: desktop.html');
 } 
 
 ?>
