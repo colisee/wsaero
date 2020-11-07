@@ -23,7 +23,7 @@ You have the choice of running wsaero through a web server stack on your OS or r
 You have the choice of running wsaero in 2 ways: with 1 or 2 containers. The former being very easy to run while the latter better conforming to the micro-service concepts.
 #### One container
 ```
-docker pull colisee/wsaero:latest
+docker pull colisee/wsaero
 ``` 
 
 #### Two containers
@@ -43,7 +43,7 @@ docker pull colisee/wsaero:httpd-latest
 #### One container
 
 ```
-docker run --name colisee-wsaero -p 80:80 -d colisee/wsaero:latest
+docker run --name colisee-wsaero -p 80:80 -d colisee/wsaero
 
 ```
 #### Two containers
