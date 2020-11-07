@@ -7,6 +7,8 @@
     <meta name="description" content="Get aviation weather reports" />
     <title>Aero Weather</title>
 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
 	  
@@ -16,7 +18,7 @@
     </script>
 
     <!-- Bring in the leaflet KML plugin -->
-    <script src="http://harrywood.co.uk/maps/examples/leaflet/leaflet-plugins/layer/vector/KML.js">
+    <script src="L.KML.js">
     </script>
 
     <script src="http://www.geoplugin.net/javascript.gp">
@@ -25,16 +27,24 @@
 
   <body onload="Load()" style="height:100%"> 
 
-    <div style="height:5%">
-      <form id="myForm">
-        <input type="button" id="showAsText" value="Show as text" onClick="ShowAsText();" />
-      </form>
+    <header class="w3-cell-row">
+      <div class="w3-container w3-blue-grey w3-cell">
+        <h2>Aviation Weather</h2>
+      </div>
+      <div class="w3-container w3-blue-grey w3-cell w3-cell-middle w3-right-align">
+        <input type="button" class="w3-button w3-large w3-white" id="showAsText" value="Show as text" onClick="ShowAsText();" />
+      </div>
+    </header>
+
+    <div id='wsMap' style="height:85%">
     </div>
 
-    <div id='wsMap' style="height:90%">
-    </div>
+    <footer class="w3-container w3-blue-grey">
+      <h5>Developped by Robin Alexander</h5>
+    </footer>
 
-    <script type="text/javascript"> 
+
+    <script type="text/javascript">
 
     var thisUrl;
     var map;
@@ -68,8 +78,14 @@
       }
 
       if (IsZoomCompatible()) {
-        kmlLayer = new L.KML(BuildUrl(thisUrl + '/wsaero.php?output=KML'), {async: true});
+        fetch(BuildUrl(thisUrl + '/wsaero.php?output=KML'))
+        .then(res => res.text())
+        .then(kmltext => {
+          const parser = new DOMParser();
+          const kml = parser.parseFromString(kmltext, 'text/xml');
+          kmlLayer = new L.KML(kml);
         map.addLayer(kmlLayer);
+        });
 	  	}
     }
 
