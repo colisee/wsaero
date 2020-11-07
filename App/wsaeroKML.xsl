@@ -38,7 +38,7 @@
             </Icon>
           </IconStyle>
         </Style>
-        <Style id="DFT">
+        <Style id="NA">
           <IconStyle>
             <Icon>
               <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
@@ -75,6 +75,7 @@
       <name>
         <xsl:value-of select="icao"/> - <xsl:value-of select="name"/>
       </name>
+      <styleUrl>#<xsl:value-of select="metar/@flight_cat"/></styleUrl>
       <description>
         <xsl:apply-templates select="metar" />
         <xsl:apply-templates select="taf" />
@@ -95,8 +96,8 @@
 
   <xsl:template match="taf">
     <![CDATA[<p>]]>
-		<xsl:value-of select="." />
-	<![CDATA[</p>]]>
+      <xsl:value-of select="." />
+    <![CDATA[</p>]]>
   </xsl:template>
 
 </xsl:stylesheet>

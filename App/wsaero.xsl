@@ -39,7 +39,14 @@
       </longitude>
       <xsl:for-each select="$metar/response/data/METAR[station_id = $icao]">
         <xsl:element name="metar">
-          <xsl:attribute name="flight_cat"><xsl:value-of select="./flight_category" /></xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="string(./flight_category)">
+              <xsl:attribute name="flight_cat"><xsl:value-of select="./flight_category" /></xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="flight_cat">NA</xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
           <xsl:value-of select="./raw_text" />
         </xsl:element>
       </xsl:for-each>
