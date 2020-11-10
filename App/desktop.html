@@ -49,9 +49,23 @@
     var thisUrl;
     var map;
     var kmlLayer = null;
+    var zoomAlerted = false;
 
     function IsZoomCompatible() {
 
+    var zoomLevel = map.getZoom();
+
+      if (!zoomAlerted) {
+        if (zoomLevel <= 6) {
+          window.alert("Too much data to retrieve at this zoom level. You can drag the map and zoom-in again.");
+          zoomAlerted = true;
+        }
+      }
+      else {
+        if (zoomLevel > 6) {
+          zoomAlerted = false;
+        }
+      }
       return(map.getZoom() > 6)?1:0;
 
     }
