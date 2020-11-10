@@ -35,7 +35,9 @@ docker pull colisee/wsaero:httpd-latest
 ## Run
 ### Standard
 * Start your web browser service if not enabled (ex: `sudo systemctl start apache2` on a typical debian OS)
-* Point your web browser to http://your_host/wsaero/
+* Point your web browser to http://your_host/wsaero/App 
+
+Please note that the url must end with "/App" since version 6.50).
 
 ### Docker
 * Launch the container with the following command(s), depending on whether you have 1 or 2 containers
