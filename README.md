@@ -5,7 +5,7 @@ wsaero is a web application that pulls aviation weather information (METAR, TAF)
 Actually, wsaero is my self-educational project aiming at expanding my professional expertise and passion to new software development techniques, such as the above ones plus css, xslt, php, git and docker.
 
 ## Pre-requisites
-You have the choice of running wsaero through a web server stack on your OS or running wsaero using the docker framework; the latter being the easiest method.
+You have the choice of running wsaero through a web server stack on your OS or running wsaero using the docker framework; the latter being the easiest and fastest method.
 ### Standard (the hard way)
 * web server capable of serving php scripts
 * php installed with the xsl module
@@ -16,7 +16,7 @@ You have the choice of running wsaero through a web server stack on your OS or r
 ## Installation
 ### Standard
 1. Install a web server stack, php and the xsl module (included in the php-xml packlage on a typical debian OS)
-2. Go to your web server root directory (ex: /var/www/html on a typical debian OS)
+2. Go to your web server root directory (ex: **/var/www/html** on a typical debian OS)
 3. Clone the project file content with the command `https://github.com/colisee/wsaero.git`
 
 ### Docker
@@ -35,13 +35,13 @@ docker pull colisee/wsaero:httpd-latest
 ## Run
 ### Standard
 * Start your web browser service if not enabled (ex: `sudo systemctl start apache2` on a typical debian OS)
-* Point your web browser to http://your_host/wsaero/App 
+* Point your web browser to **http://_your_web_server_host_/wsaero** 
 
-Please note that the url must end with "/App" since version 6.50).
+Please note that the url must end with **"/App"** for versions 6.50 and 7.0).
 
 ### Docker
 * Launch the container with the following command(s), depending on whether you have 1 or 2 containers
-* Point your web browser to http://your_host/
+* Point your web browser to **http://_your_container_web_server_host_/** (ex: **http://localhost** if docker runs on your PC)
 #### One container
 
 ```
