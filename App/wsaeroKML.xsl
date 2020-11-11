@@ -75,7 +75,14 @@
       <name>
         <xsl:value-of select="icao"/> - <xsl:value-of select="name"/>
       </name>
-      <styleUrl>#<xsl:value-of select="metar/@flight_cat"/></styleUrl>
+      <xsl:choose>
+        <xsl:when test="string(metar/@flight_cat)">
+          <styleUrl>#<xsl:value-of select="metar/@flight_cat"/></styleUrl>
+        </xsl:when>
+        <xsl:otherwise>
+          <styleUrl>#NA</styleUrl>
+        </xsl:otherwise>
+      </xsl:choose>
       <description>
         <xsl:apply-templates select="metar" />
         <xsl:apply-templates select="taf" />
