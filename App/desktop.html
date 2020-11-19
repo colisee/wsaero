@@ -7,7 +7,7 @@
     <meta name="description" content="Get aviation weather reports" />
     <title>Aero Weather</title>
 
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
@@ -46,7 +46,7 @@
 
     <script type="text/javascript">
 
-    var thisUrl;
+    var thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
     var map;
     var kmlLayer = null;
     var zoomAlerted = false;
@@ -66,7 +66,8 @@
           zoomAlerted = false;
         }
       }
-      return(map.getZoom() > 6)?1:0;
+
+      return(zoomLevel > 6) ? true:false;
 
     }
 
@@ -100,28 +101,64 @@
           kmlLayer = new L.KML(kml);
         map.addLayer(kmlLayer);
         });
-	  	}
+      }
     }
 
-    function Load() {
+    function BuildMap(loc, zoom) {
 
-      thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
+      // Set map center and zoom level
+      map.setView(loc, zoom);
 
-      // Get current geographical coordinates
-      lon = geoplugin_longitude();
-      lat = geoplugin_latitude();
-
-      // Set the leaflet map environment
-      map = L.map('wsMap');
-      map.setView([lat, lon], 9);
-      L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Weather data &copy; <a href="http://weather.aero">@viation digital data service</a>, Geolocation &copy; <a href="http://www.geoplugin.com">Geoplugin</a>',
+      // Set the tile layer from openstreetmap and specify the attributions and max zoom
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '<a href="https://www.openstreetmap.org/">OpenStreetMap</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, <a href="http://weather.aero">@viation digital data service</a>, <a href="http://www.geoplugin.com">Geoplugin</a>',
         maxZoom: 11}).addTo(map);
+
+      // Add a scale control to the map
       L.control.scale().addTo(map);
+
+      // Set function AddKmlLayer as a listener to events "zoomend" and "dragend"
       map.on('zoomend dragend', AddKmlLayer);
 
       // Display results on the map by firing the 'dragend' event
       map.fire('dragend');
+
+    }
+
+    function onLocationFound(lE) {
+
+      BuildMap(lE.latlng, 9)
+
+    }
+
+    function onLocationError(eE) {
+
+      BuildMap([45, 0], 9)
+
+    }
+
+    function Load() {
+
+      // Create the map object
+      map = L.map('wsMap');
+
+      // http protocol is used
+      if (document.location.protocol == 'http:') {
+        BuildMap([geoplugin_latitude(), geoplugin_longitude()], 9)
+      }
+      // https protocol is used
+      else {
+        // The browser supports geolocation
+        if (navigator.geolocation) {
+          map.locate({setView: true});
+          map.on('locationfound', onLocationFound);
+          map.on('locationerror', onLocationError);
+        }
+        // The browser does not support geolocation
+        else {
+          BuildMap([45, 0], 9)
+        }
+      }
 
     }
 

@@ -13,35 +13,35 @@
         <Style id="VFR">
           <IconStyle>
             <Icon>
-              <href>http://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png</href>
+              <href>https://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png</href>
             </Icon>
           </IconStyle>
         </Style>
         <Style id="MVFR">
           <IconStyle>
             <Icon>
-              <href>http://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png</href>
+              <href>https://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png</href>
             </Icon>
           </IconStyle>
         </Style>
         <Style id="IFR">
           <IconStyle>
             <Icon>
-              <href>http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png</href>
+              <href>https://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png</href>
             </Icon>
           </IconStyle>
         </Style>
         <Style id="LIFR">
           <IconStyle>
             <Icon>
-              <href>http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png</href>
+              <href>https://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png</href>
             </Icon>
           </IconStyle>
         </Style>
         <Style id="NA">
           <IconStyle>
             <Icon>
-              <href>http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
+              <href>https://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png</href>
             </Icon>
           </IconStyle>
         </Style>
