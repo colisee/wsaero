@@ -22,6 +22,7 @@ $xmlInfo = "";
 $xmlMetar = "";
 $xmlTaf = "";
 $transform = "";
+$contentType = "";
 
 
 /* -------------------------------------------------------------------- */
@@ -86,19 +87,27 @@ $transform = "";
   switch ($output) {
 	case "HTML": 
 		$transform = "wsaeroHTML.xsl";
+		$contentType = "Content-Type: text/html";
 		break;
 	case "RSS":
 		$transform = "wsaeroRSS.xsl";
+		$contentType = "Content-Type: application/rss+xml";
 		break;
 	case "KML":
 		$transform = "wsaeroKML.xsl";
+		$contentType = "Content-Type: application/vnd.google-earth.kml+xml";
+		break;
+	case "GEOJSON":
+		$transform = "wsaeroGeoJSON.xsl";
+		$contentType = "Content-Type: application/geo+json";
 		break;
 	default:
+		$contentType = "Content-Type: text/xml";
 		break;
   }
 
-  /* if KML output requested, then ignore the history parameter */
-  if ($transform == "wsaeroKML.xsl") {
+  /* if KML or GEOJSON output requested, then ignore the history parameter */
+  if (($output == "KML") or ($output == "GEOJSON")) {
 	$history = "0";
   }
 
@@ -143,7 +152,7 @@ $transform = "";
 
   /* Output the final result */
   if ($transform == "") {
-	header("Content-Type: text/xml");
+	header($contentType);
 	echo $xmlTemp;
   }
   else {
@@ -154,12 +163,8 @@ $transform = "";
 
   	$xp2 = new XSLTProcessor();
 	$xp2->importStylesheet($xsl2);
-/*
-	if (strstr($transform, 'KML') == TRUE)
-		header("Content-Type: application/vnd.google-earth.kml+xml");
-	else if (strstr($transform, 'RSS') == TRUE)
-		header("Content-Type: application/rss+xml");
-*/
+
+	header($contentType);
 	echo $xp2->transformToXML($xml2);
   }
 
