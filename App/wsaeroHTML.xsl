@@ -59,7 +59,7 @@
 	  <p>
           Data provided by <a href="http://weather.aero">Weather.aero</a>
           <br />
-          Developped by Robin Alexander
+          Developped by <a href="https://colisee.github.io">Robin Alexander</a>
 	  </p>
         </footer>
       </body>
