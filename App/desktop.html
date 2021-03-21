@@ -50,10 +50,9 @@
     var map;
     var kmlLayer = null;
     var zoomAlerted = false;
+    var mapZoom = 0;
 
-    function IsZoomCompatible() {
-
-    var zoomLevel = map.getZoom();
+    function IsZoomCompatible(zoomLevel) {
 
       if (!zoomAlerted) {
         if (zoomLevel <= 6) {
@@ -86,22 +85,34 @@
 
     function AddKmlLayer(e) {
 
-      // Delete a previous layer if it exists
-      if (map.hasLayer(kmlLayer)) {
-        map.removeLayer(kmlLayer);
-        kmlLayer = null;
+      // Local variables
+      var newZoom = map.getZoom();
+
+      // Change the layer only if we are moving or zooming out
+      if ( (e.type == 'dragend') || ((e.type == 'zoomend') && (newZoom < mapZoom)) ) {
+
+        // Delete a previous layer if it exists
+        if (map.hasLayer(kmlLayer)) {
+          map.removeLayer(kmlLayer);
+          kmlLayer = null;
+        }
+
+        if (IsZoomCompatible(newZoom)) {
+          fetch(BuildUrl(thisUrl + '/wsaero.php?output=KML'))
+          .then(res => res.text())
+          .then(kmltext => {
+            const parser = new DOMParser();
+            const kml = parser.parseFromString(kmltext, 'text/xml');
+            kmlLayer = new L.KML(kml);
+          map.addLayer(kmlLayer);
+          });
+        }
+
+        // Record the new map zoom level
+        mapZoom = newZoom;
+
       }
 
-      if (IsZoomCompatible()) {
-        fetch(BuildUrl(thisUrl + '/wsaero.php?output=KML'))
-        .then(res => res.text())
-        .then(kmltext => {
-          const parser = new DOMParser();
-          const kml = parser.parseFromString(kmltext, 'text/xml');
-          kmlLayer = new L.KML(kml);
-        map.addLayer(kmlLayer);
-        });
-      }
     }
 
     function BuildMap(loc, zoom, attributionExtra) {
