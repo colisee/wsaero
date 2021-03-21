@@ -7,20 +7,26 @@
     <meta name="description" content="Get aviation weather reports" />
     <title>Aero Weather</title>
 
+    <!-- w3 css -->
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
-	  
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin="">
     </script>
 
-    <!-- Bring in the leaflet KML plugin -->
+    <!-- Leaflet.KML -->
     <script src="L.KML.js">
     </script>
 
+    <!-- Leaflet.Legend -->
+    <link rel="stylesheet" href="https://ptma.github.io/Leaflet.Legend/src/leaflet.legend.css"/>
+    <script src="https://ptma.github.io/Leaflet.Legend/src/leaflet.legend.js">
+    </script>
+	  
+    <!-- Geoplugin  -->
     <script src="http://www.geoplugin.net/javascript.gp">
     </script>
   </head> 
@@ -128,8 +134,29 @@
         attribution: attribution + attributionExtra,
         maxZoom: 11}).addTo(map);
 
-      // Add a scale control to the map
-      L.control.scale().addTo(map);
+      // Add a legend control to the map
+      L.control.Legend({
+        position: "bottomleft",
+        title: "weather conditions",
+        column: 2,
+        legends: [{
+          label: "VFR",
+          type: "image",
+          url: "https://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png"
+          }, {
+          label: "Marginal VFR",
+          type: "image",
+          url: "https://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png"
+          }, {
+          label: "IFR",
+          type: "image",
+          url: "https://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png"
+          }, {
+          label: "Low IFR",
+          type: "image",
+          url: "https://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png"
+        }]
+      }).addTo(map);
 
       // Set function AddKmlLayer as a listener to events "zoomend" and "dragend"
       map.on('zoomend dragend', AddKmlLayer);
