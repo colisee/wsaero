@@ -91,19 +91,20 @@
 
     function AddKmlLayer(e) {
 
-      // Local variables
+      // The zoom level is compatible with data retrieval
       var newZoom = map.getZoom();
+      if (IsZoomCompatible(newZoom)) {
 
-      // Change the layer only if we are moving or zooming out
-      if ( (e.type == 'dragend') || ((e.type == 'zoomend') && (newZoom < mapZoom)) ) {
+        // Change the layer only if we are moving or zooming out
+        if ( (e.type == 'dragend') || ((e.type == 'zoomend') && (newZoom < mapZoom)) ) {
 
-        // Delete a previous layer if it exists
-        if (map.hasLayer(kmlLayer)) {
-          map.removeLayer(kmlLayer);
-          kmlLayer = null;
-        }
+          // Delete a previous layer if it exists
+          if (map.hasLayer(kmlLayer)) {
+            map.removeLayer(kmlLayer);
+            kmlLayer = null;
+          }
 
-        if (IsZoomCompatible(newZoom)) {
+          // Get the new data and build a new layer
           fetch(BuildUrl(thisUrl + '/wsaero.php?output=KML'))
           .then(res => res.text())
           .then(kmltext => {
@@ -112,11 +113,10 @@
             kmlLayer = new L.KML(kml);
           map.addLayer(kmlLayer);
           });
+
+          // Record the new map zoom level
+          mapZoom = newZoom;
         }
-
-        // Record the new map zoom level
-        mapZoom = newZoom;
-
       }
 
     }
