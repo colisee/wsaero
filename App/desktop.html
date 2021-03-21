@@ -104,14 +104,17 @@
       }
     }
 
-    function BuildMap(loc, zoom) {
+    function BuildMap(loc, zoom, attributionExtra) {
+
+      // Local variables
+      var  attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://weather.aero">@viation digital data service</a>';
 
       // Set map center and zoom level
       map.setView(loc, zoom);
 
       // Set the tile layer from openstreetmap and specify the attributions and max zoom
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '<a href="https://www.openstreetmap.org/">OpenStreetMap</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, <a href="http://weather.aero">@viation digital data service</a>, <a href="http://www.geoplugin.com">Geoplugin</a>',
+        attribution: attribution + attributionExtra,
         maxZoom: 11}).addTo(map);
 
       // Add a scale control to the map
@@ -127,24 +130,25 @@
 
     function onLocationFound(lE) {
 
-      BuildMap(lE.latlng, 9)
+      BuildMap(lE.latlng, 9, "");
 
     }
 
     function onLocationError(eE) {
 
-      BuildMap([45, 0], 9)
+      BuildMap([45, 0], 9, "");
 
     }
 
     function Load() {
+
 
       // Create the map object
       map = L.map('wsMap');
 
       // http protocol is used
       if (document.location.protocol == 'http:') {
-        BuildMap([geoplugin_latitude(), geoplugin_longitude()], 9)
+        BuildMap([geoplugin_latitude(), geoplugin_longitude()], 9, ', <a href="http://www.geoplugin.com">Geoplugin</a>');
       }
       // https protocol is used
       else {
@@ -156,7 +160,7 @@
         }
         // The browser does not support geolocation
         else {
-          BuildMap([45, 0], 9)
+          BuildMap([45, 0], 9, "")
         }
       }
 
