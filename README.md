@@ -131,6 +131,7 @@ The URL of the restful web service is *your_application_path*/__wsaero.php [coun
  * HTML: data returned in the HTML format
  * RSS: data returned in the RSS format
  * KML: data returned in the KML format
+ * GEOJSON: data returned in the GeoJSON format
 
 #### Examples
 * To retrieve the most recent weather information for Geneva Cointrin in the XML format
@@ -143,8 +144,8 @@ The URL of the restful web service is *your_application_path*/__wsaero.php [coun
 `http://your_application_path/wsaero.php?airport=LSGG;LIRF&radius=20&output=HTML`
 * To retrieve the weather information of LSGG in the last 3 hours in the RSS format
 `http://your_application_path/wsaero.php?airport=LSGG&history=3&output=RSS`
-* To retrieve the most recent weather information of all airports in Switzerland in the XML format
-`http://your_application_path/wsaero.php?country=CH`
+* To retrieve the most recent weather information of all airports in Switzerland in the GeoJSON format
+`http://your_application_path/wsaero.php?country=CH&output=GEOJSON`
 
 
 [NCAR]: http://weather.aero
