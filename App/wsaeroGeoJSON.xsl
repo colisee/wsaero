@@ -25,7 +25,7 @@
       },
       "properties": {
         "name": "<xsl:value-of select="icao"/> - <xsl:value-of select="name"/>",
-        "styleUrl": "<xsl:value-of select="metar/@flight_cat"/>"
+        "flightCat": "<xsl:value-of select="metar/@flight_cat"/>"
         <xsl:apply-templates select="metar" />
         <xsl:apply-templates select="taf" />
       }
@@ -34,11 +34,11 @@
   </xsl:template>
 
   <xsl:template match="metar">
-    ,"metar": "<![CDATA[<p>]]><xsl:value-of select="." /><![CDATA[</p>]]>"
+    ,"metar": "<xsl:value-of select="." />"
   </xsl:template>
 
   <xsl:template match="taf">
-    ,"taf": "<![CDATA[<p>]]><xsl:value-of select="." /><![CDATA[</p>]]>"
+    ,"taf": "<xsl:value-of select="." />"
   </xsl:template>
 
 </xsl:stylesheet>

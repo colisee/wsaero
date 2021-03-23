@@ -17,10 +17,6 @@
       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin="">
     </script>
 
-    <!-- Leaflet.KML -->
-    <script src="L.KML.js">
-    </script>
-
     <!-- Leaflet.Legend -->
     <link rel="stylesheet" href="https://ptma.github.io/Leaflet.Legend/src/leaflet.legend.css"/>
     <script src="https://ptma.github.io/Leaflet.Legend/src/leaflet.legend.js">
@@ -29,6 +25,10 @@
     <!-- Geoplugin  -->
     <script src="http://www.geoplugin.net/javascript.gp">
     </script>
+
+    <!-- Wsaero -->
+    <link rel="stylesheet" href="wsaero.css"/>
+
   </head> 
 
   <body onload="Load()" style="height:100%"> 
@@ -54,7 +54,7 @@
 
     var thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
     var map;
-    var kmlLayer = null;
+    var dataLayer = null;
     var zoomAlerted = false;
     var mapZoom = 0;
 
@@ -89,34 +89,63 @@
 
     }
 
-    function AddKmlLayer(e) {
+    function onEachFeature (feature, layer) {
+
+      var popupText = "";
+
+      popupText += "<strong>" + feature.properties.name + "</strong>";
+      if (feature.properties.metar) {
+        popupText += "<p>" + feature.properties.metar + "</p>";
+      }
+      if (feature.properties.taf) {
+        popupText += "<p>" + feature.properties.taf + "</p>";
+      }
+
+      layer.bindPopup(popupText);
+      layer.bindTooltip(feature.properties.name);
+
+    }
+
+    function pointToLayer(geoJsonPoint, latlng) {
+
+      var iconClass = geoJsonPoint.properties.flightCat;
+      var iconText = iconClass.substr(0, 1);
+      var myIcon = L.divIcon( {className: iconClass, html: iconText, iconSize: [24, 24]} );
+      return L.marker(latlng, {icon: myIcon});
+
+    }
+
+    function AddDataLayer(e) {
 
       // The zoom level is compatible with data retrieval
       var newZoom = map.getZoom();
+
+      // Delete a previous layer only if we are moving or zooming out while complying with zoom limits
+      if ( (e.type == 'dragend') || ((IsZoomCompatible(newZoom)) && (e.type == 'zoomend') && (newZoom < mapZoom)) ) {
+
+        // Delete a previous layer if it exists
+        if (map.hasLayer(dataLayer)) {
+          map.removeLayer(dataLayer);
+          kmlLayer = null;
+        }
+
+      }
+
+      // Get the new data and build a new layer if we are complying with zoom limits
       if (IsZoomCompatible(newZoom)) {
 
-        // Change the layer only if we are moving or zooming out
-        if ( (e.type == 'dragend') || ((e.type == 'zoomend') && (newZoom < mapZoom)) ) {
+        fetch(BuildUrl(thisUrl + '/wsaero.php?output=GEOJSON'))
+        .then(res => res.json())
+        .then(data => {
+          dataLayer = L.geoJSON(data, {
+            onEachFeature: onEachFeature,
+            pointToLayer: pointToLayer,
+          }).addTo(map);
+        });
 
-          // Delete a previous layer if it exists
-          if (map.hasLayer(kmlLayer)) {
-            map.removeLayer(kmlLayer);
-            kmlLayer = null;
-          }
+        // Record the new map zoom level
+        mapZoom = newZoom;
 
-          // Get the new data and build a new layer
-          fetch(BuildUrl(thisUrl + '/wsaero.php?output=KML'))
-          .then(res => res.text())
-          .then(kmltext => {
-            const parser = new DOMParser();
-            const kml = parser.parseFromString(kmltext, 'text/xml');
-            kmlLayer = new L.KML(kml);
-          map.addLayer(kmlLayer);
-          });
-
-          // Record the new map zoom level
-          mapZoom = newZoom;
-        }
       }
 
     }
@@ -136,30 +165,50 @@
 
       // Add a legend control to the map
       L.control.Legend({
-        position: "bottomleft",
-        title: "weather conditions",
+        position: 'bottomleft',
+        title: 'Flight conditions',
         column: 2,
+        collapsed: true,
         legends: [{
-          label: "VFR",
-          type: "image",
-          url: "https://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png"
+          label: 'VFR',
+          fillColor: 'green',
+          type: 'polygon',
+          sides: 4,
+          color: 'white',
+          weight: 2
           }, {
-          label: "Marginal VFR",
-          type: "image",
-          url: "https://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png"
+          label: 'Marginal VFR',
+          fillColor: 'blue',
+          type: 'polygon',
+          sides: 4,
+          color: 'white',
+          weight: 2 
           }, {
-          label: "IFR",
-          type: "image",
-          url: "https://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png"
+          label: 'IFR',
+          fillColor: 'red',
+          type: 'polygon',
+          sides: 4,
+          color: 'white',
+          weight: 2 
           }, {
-          label: "Low IFR",
-          type: "image",
-          url: "https://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png"
+          label: 'Low IFR',
+          fillColor: 'black',
+          type: 'polygon',
+          sides: 4,
+          color: 'white',
+          weight: 2 
+          }, {
+         label: 'Unknown',
+          fillColor: 'lightgrey',
+          type: 'polygon',
+          sides: 4,
+          color: 'white',
+          weight: 2 
         }]
       }).addTo(map);
 
       // Set function AddKmlLayer as a listener to events "zoomend" and "dragend"
-      map.on('zoomend dragend', AddKmlLayer);
+      map.on('zoomend dragend', AddDataLayer);
 
       // Display results on the map by firing the 'dragend' event
       map.fire('dragend');

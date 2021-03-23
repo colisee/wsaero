@@ -1,40 +1,79 @@
 results {
-font-family: Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 airport {
-display: block;
-background-color: silver;
-margin: 10px;
-padding: 10px;
+  display: block;
+  background-color: silver;
+  margin: 10px;
+  padding: 10px;
 }
 
 icao, name {
-display: inline-block;
-padding-right: 5px;
-font-weight: bold;
+  display: inline-block;
+  padding-right: 5px;
+  font-weight: bold;
 }
 
 latitude, longitude {
-display: none;
+  display: none;
 }
 
 metar, taf {
-display: block;
+  display: block;
 }
 
 [flight_cat=VFR] {
-color: green;
+  color: green;
 }
 
 [flight_cat=MVFR] {
-color: blue;
+  color: blue;
 }
 
 [flight_cat=IFR] {
-color: red;
+  color: red;
 }
 
 [flight_cat=LIFR] {
-color: magenta;
+  color: black;
+}
+
+.VFR {
+  background-color: green;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+.MVFR {
+  background-color: blue;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+.IFR {
+  background-color: red;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+.LIFR {
+  background-color: black;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+.NA {
+  background-color: lightgrey;
+  color: black;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
 }
