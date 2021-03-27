@@ -1,9 +1,9 @@
 <?php
 
-/* Define constants */
-Define("BASE_URL", "http://aviationweather.gov/adds/dataserver_current/httpparam?requestType=retrieve&format=xml");
+// Constants
+Define("BASE_URL", "https://aviationweather.gov/adds/dataserver_current/httpparam?requestType=retrieve&format=xml");
 
-/* Retrieve form variables */
+// Form variables
 $country = array_key_exists('country', $_GET) ? $_GET['country'] : "";
 $airport = array_key_exists('airport', $_GET) ? $_GET['airport'] : "";
 $nauticalRadius = array_key_exists('radius', $_GET) ? $_GET['radius'] : "";
@@ -13,8 +13,9 @@ $minLat = array_key_exists('minLat', $_GET) ? $_GET['minLat'] : "";
 $minLon = array_key_exists('minLon', $_GET) ? $_GET['minLon'] : "";
 $maxLat = array_key_exists('maxLat', $_GET) ? $_GET['maxLat'] : "";
 $maxLon = array_key_exists('maxLon', $_GET) ? $_GET['maxLon'] : "";
+$minDegreeDistance = array_key_exists('minDegreeDistance', $_GET) ? $_GET['minDegreeDistance'] : "";
 
-/* Define program variables */
+// Program variables
 $urlInfo = BASE_URL . "&datasource=stations";
 $urlMetar = BASE_URL . "&datasource=metars";
 $urlTaf = BASE_URL . "&datasource=tafs";
@@ -26,35 +27,40 @@ $contentType = "";
 
 
 /* -------------------------------------------------------------------- */
-/* Goal : Build the urls needed to access weather.aero			*/
+/* Goal : Build the Info url needed to access weather.aero		*/
 /* -------------------------------------------------------------------- */
 
-  /* Country */
-  $country = strtoupper($country);
-  $country = str_replace(" ", "", $country);
+  // Minimum Degree Distance specified
+  if ($minDegreeDistance != "") {
+        $urlInfo .= "&minDegreeDistance=" . $minDegreeDistance;
+  }
+
+  // Country specified
   if ($country != "") {
+	$country = strtoupper($country);
+	$country = str_replace(" ", "", $country);
   	$country = "~" . $country;
 	$country = str_replace(",", ",~", $country);
 	$query = "&stationstring=" . $country;
   }
 
-  /* Airport */
-  $airport = strtoupper($airport);
-  $airport = str_replace(" ", "", $airport);
+  // Airport specified
   if ($airport != "") {
+	$airport = strtoupper($airport);
+	$airport = str_replace(" ", "", $airport);
 
-	/* Radius was specified */
+	// Radius specified
 	if (is_numeric($nauticalRadius)) {
 
-		/* Convert nautical mile radius into statute mile radius */
+		// Convert nautical mile radius into statute mile radius
         	$statuteRadius = 1.15077945 * $nauticalRadius;
 
-		/* Flightpath mode */
+		// Flightpath mode
 		if (strstr($airport, ';') == TRUE) {
 			$query = "&flightpath=" . $statuteRadius. ";" . $airport;
 		}
 
-		/* Radius mode */
+		// Radius mode
 		else {
 			/* Find the longitude & latitude of the first airport */
 			$urlTemp = $urlInfo . "&stationstring=" . $airport;
@@ -72,18 +78,50 @@ $contentType = "";
 		}
 	}
 
-	/* No Radius specified */
+	// No Radius specified
 	else {
 		$query = "&stationstring=" . $airport;
 	}
   }
 
-  /* Viewport was specified */
+  // Viewport was specified
   if ($minLat != "") {
 	$query = "&minLat=" . $minLat . "&minLon=" . $minLon . "&maxLat=" . $maxLat . "&maxLon=" . $maxLon;
   }
 
-  /* Set transformation */
+  // Set the info URL to access aviationweather.gov
+  $urlInfo .= $query;
+
+  // Get the info data
+  $xmlInfo = file_get_contents($urlInfo);
+
+
+/* -------------------------------------------------------------------- */
+/* Goal : Build the METAR and TAF urls                                  */
+/* -------------------------------------------------------------------- */
+
+  // if KML or GEOJSON output requested, then ignore the history parameter
+  if (($output == "KML") or ($output == "GEOJSON")) {
+        $history = "0";
+  }
+
+  if ($history == "0") {
+        $urlMetar .= "&hoursBeforeNow=3&mostRecentForEachStation=constraint";
+        $urlTaf .= "&hoursBeforeNow=3&mostRecentForEachStation=constraint";
+  }
+  else {
+        $urlMetar .= "&hoursBeforeNow=" . $history;
+        $urlTaf .= "&hoursBeforeNow=" . $history;
+  }
+
+  $urlMetar .= $query;
+  $urlTaf .= $query;
+
+
+/* -------------------------------------------------------------------- */
+/* Goal : Set the output transformation options                         */
+/* -------------------------------------------------------------------- */
+
   switch ($output) {
 	case "HTML": 
 		$transform = "wsaeroHTML.xsl";
@@ -106,38 +144,12 @@ $contentType = "";
 		break;
   }
 
-  /* if KML or GEOJSON output requested, then ignore the history parameter */
-  if (($output == "KML") or ($output == "GEOJSON")) {
-	$history = "0";
-  }
-
-  /* Set the info URL to access aviationweather.gov */
-  $urlInfo .= $query;
-
-  if ($history == "0") {
-	$query .= "&hoursBeforeNow=3&mostRecentForEachStation=true";
-  }
-  else {
-	$query .= "&hoursBeforeNow=" . $history;
-  }
-
-  /* Set the metar & taf URLs to access aviationweather.gov */
-  $urlMetar .= $query;
-  $urlTaf .= $query;
-
-
-/* -------------------------------------------------------------------- */
-/* Goal : Get the data from aviationweather.gov				*/
-/* -------------------------------------------------------------------- */
-
-  $xmlInfo = GetData($urlInfo);
-
 
 /* -------------------------------------------------------------------- */
 /* Goal : Output the result						*/
 /* -------------------------------------------------------------------- */
 
-  /* Combine 3 data set into 1 internal xml result */
+  // Combine Info, Metar and Taf data sets into 1 xml result
 
   $xml1 = new DOMDocument();
   $xml1->loadXML($xmlInfo);
@@ -150,7 +162,7 @@ $contentType = "";
   $xp1->setParameter('', 'urlTaf', $urlTaf);
   $xmlTemp = $xp1->transformToXML($xml1);
 
-  /* Output the final result */
+  // Output the result as per user format request
   if ($transform == "") {
 	header($contentType);
 	echo $xmlTemp;
@@ -167,21 +179,5 @@ $contentType = "";
 	header($contentType);
 	echo $xp2->transformToXML($xml2);
   }
-
-/* -------------------------------------------------------------------- */
-/* Name : GetData							*/
-/* Goal : Get the data from weather.aero				*/
-/* Type : Function							*/
-/* -------------------------------------------------------------------- */
-
-function GetData($url) {
-
-  do {
-	$xml = file_get_contents($url);
-  } while (!$xml);
-
-  return($xml);
-
-}
 
 ?>
