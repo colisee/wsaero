@@ -107,8 +107,8 @@ The URL of the restful web service is *your_application_path*/__wsaero.php [coun
 * Optional parameter, but it must be specified if [country] is not defined
 * Specify the airport 4-character-long ICAO code (ex: LSGG for Geneva Cointrin)
 * You can specify several aiports by entering each ICAO codes, separated by the:
- * "," sign if it is a list of airports
- * ";" sign if the airports represent a flight path 
+  * "," sign if it is a list of airports
+  * ";" sign if the airports represent a flight path 
 
 #### radius
 * Optional parameter
@@ -118,20 +118,24 @@ The URL of the restful web service is *your_application_path*/__wsaero.php [coun
 
 #### history
 * Optional parameter
-* Possible values are:
- * **0: Most recent data (default)**
- * 3: Last 3 hours
- * 6: Last 6 hours
- * 12: Last 12 hours
+* Expressed in hours (can be a decimal)
+
+#### geographical bounds
+* Optional parameters
+* 4 parameters:
+  * minLat: minimum latitude in degrees (-180, 180)
+  * maxLat: maximum latitude in degrees (-180, 180)
+  * minLon: minimum longitude in degrees (-180, 180)
+  * maxLon: maximum longitude in degrees (-180, 180)
 
 #### output
 * Optional parameter
 * Possible values are:
- * **XML: data in xml format as per the "wsaero.xsd" schema (default)**
- * HTML: data returned in the HTML format
- * RSS: data returned in the RSS format
- * KML: data returned in the KML format
- * GEOJSON: data returned in the GeoJSON format
+  * **XML: data in xml format as per the "wsaero.xsd" schema (default)**
+  * HTML: data returned in the HTML format
+  * RSS: data returned in the RSS format
+  * KML: data returned in the KML format
+  * GEOJSON: data returned in the GeoJSON format
 
 #### Examples
 * To retrieve the most recent weather information for Geneva Cointrin in the XML format
@@ -146,6 +150,7 @@ The URL of the restful web service is *your_application_path*/__wsaero.php [coun
 `http://your_application_path/wsaero.php?airport=LSGG&history=3&output=RSS`
 * To retrieve the most recent weather information of all airports in Switzerland in the GeoJSON format
 `http://your_application_path/wsaero.php?country=CH&output=GEOJSON`
-
+* To retrieve the most recent weather information of all airports within the area (45N, 5W, 50N, 10W) in the XML format
+`http://your_application_path/wsaero.php?minLat=45&maxLat=50&minLon=5&maxLon=10`
 
 [NCAR]: http://weather.aero
