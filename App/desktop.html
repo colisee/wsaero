@@ -52,40 +52,38 @@
 
     <script type="text/javascript">
 
+    // Constants
+    const ZOOM_THRESHOLD = 6;
+
+    // Global variables
     var thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
     var map;
     var dataLayer = null;
     var zoomAlerted = false;
-    var mapZoom = 0;
+    var oldZoom = 0;
 
-    function IsZoomCompatible(zoomLevel) {
-
-      if (!zoomAlerted) {
-        if (zoomLevel <= 6) {
-          window.alert("Too much data to retrieve at this zoom level. You can drag the map and zoom-in again.");
-          zoomAlerted = true;
-        }
-      }
-      else {
-        if (zoomLevel > 6) {
-          zoomAlerted = false;
-        }
-      }
-
-      return(zoomLevel > 6) ? true:false;
-
-    }
-
-    function BuildUrl(base) {
+    function BuildUrl(base, zoom) {
 
       // Get the map viewport coordinates
-      var viewport = map.getBounds();
+      viewport = map.wrapLatLngBounds(map.getBounds());
       minLat = viewport.getSouth();
       maxLat = viewport.getNorth();
       minLon = viewport.getWest();
       maxLon = viewport.getEast();
 
-      return(base + '&minLat=' + minLat + '&minLon=' + minLon + '&maxLat=' + maxLat + '&maxLon=' + maxLon);
+      // Properly wrap longitude values
+      maxLon = (maxLon > 180) ? maxLon - 360 : maxLon;
+      minLon = (minLon < -180) ? minLon + 360 : minLon;
+
+      // Compute the degree distance
+      degreeDistance = (ZOOM_THRESHOLD + 1 - zoom) * 2;
+
+      if (degreeDistance > 0) {
+        return(base + '&minDegreeDistance=' + degreeDistance + '&minLat=' + minLat + '&minLon=' + minLon + '&maxLat=' + maxLat + '&maxLon=' + maxLon);
+      }
+      else {
+        return(base + '&minLat=' + minLat + '&minLon=' + minLon + '&maxLat=' + maxLat + '&maxLon=' + maxLon);
+      }
 
     }
 
@@ -95,10 +93,10 @@
 
       popupText += "<strong>" + feature.properties.name + "</strong>";
       if (feature.properties.metar) {
-        popupText += "<p>" + feature.properties.metar + "</p>";
+        popupText += "<p>METAR<br />" + feature.properties.metar + "</p>";
       }
       if (feature.properties.taf) {
-        popupText += "<p>" + feature.properties.taf + "</p>";
+        popupText += "<p>TAF<br />" + feature.properties.taf + "</p>";
       }
 
       layer.bindPopup(popupText);
@@ -117,35 +115,28 @@
 
     function AddDataLayer(e) {
 
-      // The zoom level is compatible with data retrieval
+      // Local variables
       var newZoom = map.getZoom();
 
-      // Delete a previous layer only if we are moving or zooming out while complying with zoom limits
-      if ( (e.type == 'dragend') || ((IsZoomCompatible(newZoom)) && (e.type == 'zoomend') && (newZoom < mapZoom)) ) {
+      // Delete a previous layer only if we are moving or zooming-Out or zooming-In below the zoom threshold 
+      if ( (e.type == 'dragend') || ((e.type == 'zoomend') && ((newZoom < oldZoom) || (newZoom <= ZOOM_THRESHOLD))) ) {
 
         // Delete a previous layer if it exists
         if (map.hasLayer(dataLayer)) {
           map.removeLayer(dataLayer);
-          kmlLayer = null;
         }
 
-      }
+        // Get the new data 
+        fetch(BuildUrl(thisUrl + '/wsaero.php?output=GEOJSON', newZoom))
+          .then(res => res.json())
+          .then(data => {
+            dataLayer = L.geoJSON(data, {
+              onEachFeature: onEachFeature,
+              pointToLayer: pointToLayer,
+            }).addTo(map);
+          });
 
-      // Get the new data and build a new layer if we are complying with zoom limits
-      if (IsZoomCompatible(newZoom)) {
-
-        fetch(BuildUrl(thisUrl + '/wsaero.php?output=GEOJSON'))
-        .then(res => res.json())
-        .then(data => {
-          dataLayer = L.geoJSON(data, {
-            onEachFeature: onEachFeature,
-            pointToLayer: pointToLayer,
-          }).addTo(map);
-        });
-
-        // Record the new map zoom level
-        mapZoom = newZoom;
-
+        oldZoom = newZoom;
       }
 
     }
@@ -255,11 +246,8 @@
 
     function ShowAsText() {
 
-    // Do not use a variable named history as it is the browser history object
-    listUrl = BuildUrl(thisUrl + '/wsaero.php?output=HTML');
-
     // Open a new window to display the result as HTML/text
-    window.open(listUrl);
+    window.open(BuildUrl(thisUrl + '/wsaero.php?output=HTML', map.getZoom()));
 
     }
 
