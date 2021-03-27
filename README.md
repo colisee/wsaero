@@ -150,7 +150,7 @@ The URL of the restful web service is *your_application_path*/__wsaero.php [coun
 `http://your_application_path/wsaero.php?airport=LSGG&history=3&output=RSS`
 * To retrieve the most recent weather information of all airports in Switzerland in the GeoJSON format
 `http://your_application_path/wsaero.php?country=CH&output=GEOJSON`
-* To retrieve the most recent weather information of all airports within the area (45N, 5W, 50N, 10W) in the GeoJSON format
-`http://your_application_path/wsaero.php?minLat=45&maxLat=50&minLon=5&maxLon=10&output=GEOJSON`
+* To retrieve the most recent weather information of all airports within the area (45N, 5W, 50N, 10W) in the XML format
+`http://your_application_path/wsaero.php?minLat=45&maxLat=50&minLon=5&maxLon=10`
 
 [NCAR]: http://weather.aero
