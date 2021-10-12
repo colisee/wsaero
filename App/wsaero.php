@@ -65,7 +65,7 @@ $contentType = "";
 			/* Find the longitude & latitude of the first airport */
 			$urlTemp = $urlInfo . "&stationstring=" . $airport;
 			$domInfo = new DOMDocument();
-			$domInfo->loadXML(GetData($urlTemp));
+			$domInfo->loadXML(file_get_contents($urlTemp));
 
 			$latitudes = $domInfo->getElementsByTagName('latitude');
 			if (count($latitudes) > 0) {
