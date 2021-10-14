@@ -119,7 +119,7 @@
       var newZoom = map.getZoom();
 
       // Delete a previous layer only if we are moving or zooming-Out or zooming-In below the zoom threshold 
-      if ( (e.type == 'dragend') || ((e.type == 'zoomend') && ((newZoom < oldZoom) || (newZoom <= ZOOM_THRESHOLD))) ) {
+      if ( (e.type == 'dragend') || ((e.type == 'zoomend') && ((newZoom < oldZoom) || (newZoom <= ZOOM_THRESHOLD + 1))) ) {
 
         // Delete a previous layer if it exists
         if (map.hasLayer(dataLayer)) {
