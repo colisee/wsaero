@@ -93,10 +93,10 @@
 
       popupText += "<strong>" + feature.properties.name + "</strong>";
       if (feature.properties.metar) {
-        popupText += "<p>METAR<br />" + feature.properties.metar + "</p>";
+        popupText += "<p><u>METAR</u><br />" + feature.properties.metar + "</p>";
       }
       if (feature.properties.taf) {
-        popupText += "<p>TAF<br />" + feature.properties.taf + "</p>";
+        popupText += "<p><u>TAF</u><br />" + feature.properties.taf + "</p>";
       }
 
       layer.bindPopup(popupText);
