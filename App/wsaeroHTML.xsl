@@ -56,24 +56,49 @@
             <xsl:element name="th">conditions</xsl:element>
           </xsl:element>
           <xsl:element name="tr">
-            <xsl:element name="td">[V]FR</xsl:element>
-            <xsl:element name="td">: Visual Flight Rules</xsl:element>
+            <xsl:element name="td">
+              <xsl:element name="span">
+                <xsl:attribute name="class">w3-badge w3-small VFR</xsl:attribute>
+                <xsl:text>V</xsl:text>
+              </xsl:element>
+            </xsl:element>
+            <xsl:element name="td">Visual Flight Rules</xsl:element>
           </xsl:element>
           <xsl:element name="tr">
-            <xsl:element name="td">[M]VFR</xsl:element>
-            <xsl:element name="td">: Marginal Visual Flight Rules</xsl:element>
+            <xsl:element name="td">
+              <xsl:element name="span">
+                <xsl:attribute name="class">w3-badge w3-small MVFR</xsl:attribute>
+                <xsl:text>M</xsl:text>
+              </xsl:element>
+            </xsl:element>
+            <xsl:element name="td">Marginal Visual Flight Rules</xsl:element>
           </xsl:element>
           <xsl:element name="tr">
-            <xsl:element name="td">[I]FR</xsl:element>
-            <xsl:element name="td">: Instrumental Flight Rules</xsl:element>
+            <xsl:element name="td">
+              <xsl:element name="span">
+                <xsl:attribute name="class">w3-badge w3-small IFR</xsl:attribute>
+                <xsl:text>I</xsl:text>
+              </xsl:element>
+            </xsl:element>
+            <xsl:element name="td">Instrumental Flight Rules</xsl:element>
           </xsl:element>
           <xsl:element name="tr">
-            <xsl:element name="td">[L]IFR</xsl:element>
-            <xsl:element name="td">: Low Instrumental Flight Rules</xsl:element>
+            <xsl:element name="td">
+              <xsl:element name="span">
+                <xsl:attribute name="class">w3-badge w3-small LIFR</xsl:attribute>
+                <xsl:text>L</xsl:text>
+              </xsl:element>
+            </xsl:element>
+            <xsl:element name="td">Low Instrumental Flight Rules</xsl:element>
           </xsl:element>
           <xsl:element name="tr">
-            <xsl:element name="td">[N]A</xsl:element>
-            <xsl:element name="td">: Not Available</xsl:element>
+            <xsl:element name="td">
+              <xsl:element name="span">
+                <xsl:attribute name="class">w3-badge w3-small NA</xsl:attribute>
+                <xsl:text>N</xsl:text>
+              </xsl:element>
+            </xsl:element>
+            <xsl:element name="td">Not Available</xsl:element>
           </xsl:element>
         </xsl:element>
         </xsl:element>
