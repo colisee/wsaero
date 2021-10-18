@@ -14,6 +14,8 @@ $minLon = array_key_exists('minLon', $_GET) ? $_GET['minLon'] : "";
 $maxLat = array_key_exists('maxLat', $_GET) ? $_GET['maxLat'] : "";
 $maxLon = array_key_exists('maxLon', $_GET) ? $_GET['maxLon'] : "";
 $minDegreeDistance = array_key_exists('minDegreeDistance', $_GET) ? $_GET['minDegreeDistance'] : "";
+$lat = array_key_exists('lat', $_GET) ? $_GET['lat'] : "";
+$lon = array_key_exists('lon', $_GET) ? $_GET['lon'] : "";
 
 // Program variables
 $urlInfo = BASE_URL . "&datasource=stations";
@@ -30,22 +32,22 @@ $contentType = "";
 /* Goal : Build the Info url needed to access weather.aero		*/
 /* -------------------------------------------------------------------- */
 
-  // Minimum Degree Distance specified
-  if ($minDegreeDistance != "") {
-        $urlInfo .= "&minDegreeDistance=" . $minDegreeDistance;
-  }
+// Minimum Degree Distance specified
+if ($minDegreeDistance != "") {
+	$urlInfo .= "&minDegreeDistance=" . $minDegreeDistance;
+}
 
-  // Country specified
-  if ($country != "") {
+// Country specified
+if ($country != "") {
 	$country = strtoupper($country);
 	$country = str_replace(" ", "", $country);
   	$country = "~" . $country;
 	$country = str_replace(",", ",~", $country);
 	$query = "&stationstring=" . $country;
-  }
+}
 
-  // Airport specified
-  if ($airport != "") {
+// Airport specified
+if ($airport != "") {
 	$airport = strtoupper($airport);
 	$airport = str_replace(" ", "", $airport);
 
@@ -74,7 +76,6 @@ $contentType = "";
 				$lon = $longitudes[0]->nodeValue;
 				$query = "&radialDistance=" . $statuteRadius . ";" . $lon . "," . $lat;
 			}
-
 		}
 	}
 
@@ -82,47 +83,57 @@ $contentType = "";
 	else {
 		$query = "&stationstring=" . $airport;
 	}
-  }
+}
 
-  // Viewport was specified
-  if ($minLat != "") {
+// Viewport was specified
+if ($minLat != "") {
 	$query = "&minLat=" . $minLat . "&minLon=" . $minLon . "&maxLat=" . $maxLat . "&maxLon=" . $maxLon;
-  }
+}
 
-  // Set the info URL to access aviationweather.gov
-  $urlInfo .= $query;
+// If no country, no airport and no viewport, get the IP-based geo location
+if ( ($country == "") && ($airport == "") && ($minLat == "") ) {
+	if ( ($lon == 0) && ($lat == 0) ) {
+		$geoplugin = unserialize( file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $_SERVER['REMOTE_ADDR']) );
+		$lon = $geoplugin['geoplugin_longitude'];
+		$lat = $geoplugin['geoplugin_latitude'];
+	}
+	$query = "&radialDistance=50" . ";" . $lon . "," . $lat;
+}
 
-  // Get the info data
-  $xmlInfo = file_get_contents($urlInfo);
+// Set the info URL to access aviationweather.gov
+$urlInfo .= $query;
+
+// Get the info data
+$xmlInfo = file_get_contents($urlInfo);
 
 
 /* -------------------------------------------------------------------- */
 /* Goal : Build the METAR and TAF urls                                  */
 /* -------------------------------------------------------------------- */
 
-  // if KML or GEOJSON output requested, then ignore the history parameter
-  if (($output == "KML") or ($output == "GEOJSON")) {
-        $history = "0";
-  }
+// if KML or GEOJSON output requested, then ignore the history parameter
+if (($output == "KML") or ($output == "GEOJSON")) {
+	$history = "0";
+}
 
-  if ($history == "0") {
-        $urlMetar .= "&hoursBeforeNow=3&mostRecentForEachStation=constraint";
-        $urlTaf .= "&hoursBeforeNow=3&mostRecentForEachStation=constraint";
-  }
-  else {
-        $urlMetar .= "&hoursBeforeNow=" . $history;
-        $urlTaf .= "&hoursBeforeNow=" . $history;
-  }
+if ($history == "0") {
+	$urlMetar .= "&hoursBeforeNow=3&mostRecentForEachStation=constraint";
+	$urlTaf .= "&hoursBeforeNow=3&mostRecentForEachStation=constraint";
+}
+else {
+	$urlMetar .= "&hoursBeforeNow=" . $history;
+	$urlTaf .= "&hoursBeforeNow=" . $history;
+}
 
-  $urlMetar .= $query;
-  $urlTaf .= $query;
+$urlMetar .= $query;
+$urlTaf .= $query;
 
 
 /* -------------------------------------------------------------------- */
 /* Goal : Set the output transformation options                         */
 /* -------------------------------------------------------------------- */
 
-  switch ($output) {
+switch ($output) {
 	case "HTML": 
 		$transform = "wsaeroHTML.xsl";
 		$contentType = "Content-Type: text/html";
@@ -142,32 +153,32 @@ $contentType = "";
 	default:
 		$contentType = "Content-Type: text/xml";
 		break;
-  }
+}
 
 
 /* -------------------------------------------------------------------- */
 /* Goal : Output the result						*/
 /* -------------------------------------------------------------------- */
 
-  // Combine Info, Metar and Taf data sets into 1 xml result
+// Combine Info, Metar and Taf data sets into 1 xml result
 
-  $xml1 = new DOMDocument();
-  $xml1->loadXML($xmlInfo);
-  $xsl1 = new DOMDocument();
-  $xsl1->load('wsaero.xsl');
+$xml1 = new DOMDocument();
+$xml1->loadXML($xmlInfo);
+$xsl1 = new DOMDocument();
+$xsl1->load('wsaero.xsl');
 
-  $xp1 = new XSLTProcessor();
-  $xp1->importStylesheet($xsl1);
-  $xp1->setParameter('', 'urlMetar', $urlMetar);
-  $xp1->setParameter('', 'urlTaf', $urlTaf);
-  $xmlTemp = $xp1->transformToXML($xml1);
+$xp1 = new XSLTProcessor();
+$xp1->importStylesheet($xsl1);
+$xp1->setParameter('', 'urlMetar', $urlMetar);
+$xp1->setParameter('', 'urlTaf', $urlTaf);
+$xmlTemp = $xp1->transformToXML($xml1);
 
-  // Output the result as per user format request
-  if ($transform == "") {
+// Output the result as per user format request
+if ($transform == "") {
 	header($contentType);
 	echo $xmlTemp;
-  }
-  else {
+}
+else {
 	$xml2 = new DOMDocument();
 	$xml2->loadXML($xmlTemp);
 	$xsl2 = new DOMDocument();
@@ -178,6 +189,6 @@ $contentType = "";
 
 	header($contentType);
 	echo $xp2->transformToXML($xml2);
-  }
+}
 
 ?>
