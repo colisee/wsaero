@@ -43,11 +43,11 @@ By default, the application will select the best display based on your device, b
 The URL of the RESTful web service is http://localhost/__wsaero.php [country][airport][radius][history][output]__
 
 ### country
-* Optional parameter, but it must be specified if [airport] is not defined
+* Optional parameter (see [Remarks](#remarks))
 * It is the country 2-character-long code (ex: CH for Switzerland)
 
 ### airport
-* Optional parameter, but it must be specified if [country] is not defined
+* Optional parameter (see [Remarks](#remarks))
 * Specify the airport 4-character-long ICAO code (ex: LSGG for Geneva Cointrin)
 * You can specify several aiports by entering each ICAO codes, separated by the:
   * "," sign if it is a list of airports
@@ -64,7 +64,7 @@ The URL of the RESTful web service is http://localhost/__wsaero.php [country][ai
 * Expressed in hours (can be a decimal)
 
 ### geographical bounds
-* Optional parameters
+* Optional parameters (see [Remarks](#remarks))
 * 4 parameters:
   * minLat: minimum latitude in degrees (-180, 180)
   * maxLat: maximum latitude in degrees (-180, 180)
@@ -79,6 +79,10 @@ The URL of the RESTful web service is http://localhost/__wsaero.php [country][ai
   * RSS: data returned in the RSS format
   * KML: data returned in the KML format
   * GEOJSON: data returned in the GeoJSON format
+
+### Remarks
+If no country, no airport and no geographical bounds are passed to the RESTful web service, then the web service will try to get the current location
+from the caller's ip address and apply a 50 nautical miles radius. 
 
 ### Examples
 * To retrieve the most recent weather information for Geneva Cointrin in the XML format

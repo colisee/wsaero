@@ -54,6 +54,8 @@
 
     // Constants
     const ZOOM_THRESHOLD = 6;
+    const DEFAULT_LAT = 43;
+    const DEFAULT_LON = -1;
 
     // Global variables
     var thisUrl = document.URL.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');
@@ -214,7 +216,7 @@
 
     function onLocationError(eE) {
 
-      BuildMap([45, 0], 9, "");
+      BuildMap([DEFAULT_LAT, DEFAULT_LON], 9, "");
 
     }
 
@@ -238,7 +240,7 @@
         }
         // The browser does not support geolocation
         else {
-          BuildMap([45, 0], 9, "")
+          BuildMap([DEFAULT_LAT, DEFAULT_LON], 9, "")
         }
       }
 

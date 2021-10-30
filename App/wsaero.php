@@ -92,7 +92,7 @@ if ($minLat != "") {
 
 // If no country, no airport and no viewport, get the IP-based geo location
 if ( ($country == "") && ($airport == "") && ($minLat == "") ) {
-	if ( ($lon == 0) && ($lat == 0) ) {
+	if ($lon == "") {
 		$geoplugin = unserialize( file_get_contents('http://www.geoplugin.net/php.gp?ip=' . $_SERVER['REMOTE_ADDR']) );
 		$lon = $geoplugin['geoplugin_longitude'];
 		$lat = $geoplugin['geoplugin_latitude'];
