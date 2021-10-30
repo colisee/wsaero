@@ -26,28 +26,31 @@ the latter being the easiest and fastest method
 The rest of this guide will focus on the docker option.
   
 # Quick start
-Run the following command to start the application:
+1. Build the docker image
+```
+docker build --tag colisee/wsaero .
+```
+2. Run the docker image (server)
 ```
 docker run --detach --rm --name wsaero --publish 80:80 colisee/wsaero
 ``` 
-
 # Consume the data
-This guide assumes you are accessing the application from the host that is running the application container (localhost). If this is not the case, substitute localhost with the name or IP address of the host running the application.
+This guide assumes you are accessing the application from the host that is running the server. If this is not the case, then replace *localhost* with the name or IP address of the server.
 
 ## As a web application
-By default, the application will select the best display based on your device, but you can decide which one to access:
+Point your browser to http://localhost. By default, the application will select the best display based on the size of your device, but you can decide which one to access:
 * Map display: http://localhost/desktop.html
 * Text display: http://localhost/mobile.html 
 
 ## As a RESTful web service
-The URL of the RESTful web service is http://localhost/__wsaero.php [country][airport][radius][history][output]__
+The URL of the RESTful web service is http://localhost/wsaero.php [country][airport][radius][history][output]
 
 ### country
-* Optional parameter (see [Remarks](#remarks))
+* Optional parameter (see [remarks](#remarks))
 * It is the country 2-character-long code (ex: CH for Switzerland)
 
 ### airport
-* Optional parameter (see [Remarks](#remarks))
+* Optional parameter (see [remarks](#remarks))
 * Specify the airport 4-character-long ICAO code (ex: LSGG for Geneva Cointrin)
 * You can specify several aiports by entering each ICAO codes, separated by the:
   * "," sign if it is a list of airports
@@ -64,7 +67,7 @@ The URL of the RESTful web service is http://localhost/__wsaero.php [country][ai
 * Expressed in hours (can be a decimal)
 
 ### geographical bounds
-* Optional parameters (see [Remarks](#remarks))
+* Optional parameters (see [remarks](#remarks))
 * 4 parameters:
   * minLat: minimum latitude in degrees (-180, 180)
   * maxLat: maximum latitude in degrees (-180, 180)
@@ -103,22 +106,15 @@ from the caller's ip address and apply a 50 nautical miles radius.
 # Advanced
 ## Running the application with 2 containers
 You have the option to run the application, using 2 containers: one for the web server and one for the application code:
-```
-docker run --detach --rm --name wsaero-app --volume wsaero:/wsaero colisee/wsaero:app
-docker run --detach --rm --name wsaero-httpd --publish 80:80 --volume wsaero:/var/www/html colisee/wsaero:httpd
-```
-## Build the application image
-You can choose to build the container image(s) instead of getting them from the docker registry. 
-
-### Option: 1 container
-```
-docker build --tag colisee/wsaero .
-```
-
-### Option: 2 containers
+1. Build the 2 docker images
 ```
 docker build --file Dockerfile-app --tag colisee/wsaero-app .
 docker build --file Dockerfile-httpd --tag colisee/wsaero-httpd .
+```
+2. Run the 2 docker images
+```
+docker run --detach --rm --name wsaero-app --volume wsaero:/wsaero colisee/wsaero:app
+docker run --detach --rm --name wsaero-httpd --publish 80:80 --volume wsaero:/var/www/html colisee/wsaero:httpd
 ```
 
 [NCAR]: http://weather.aero
