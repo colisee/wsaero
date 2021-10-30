@@ -60,6 +60,9 @@
 
       function Load() {
 
+        const DEFAULT_LON = -1;
+        const DEFAULT_LAT = 43;
+
         // http protocol is used
         if (document.location.protocol == 'http:') {
           document.forms["form"]["lon"].value = geoplugin_longitude();
@@ -74,8 +77,8 @@
           }
           // The browser does not support geolocation
           else {
-            document.forms["form"]["lon"].value = 0;
-            document.forms["form"]["lat"].value = 0;
+            document.forms["form"]["lon"].value = DEFAULT_LON;
+            document.forms["form"]["lat"].value = DEFAULT_LAT;
           }
         }
       }
