@@ -1,7 +1,7 @@
 <?php
 
 // Constants
-Define("BASE_URL", "https://aviationweather.gov/adds/dataserver_current/httpparam?requestType=retrieve&format=xml");
+Define("BASE_URL", "https://aviationweather.gov/api/data/dataserver?requestType=retrieve&format=xml");
 
 // Form variables
 $country = array_key_exists('country', $_GET) ? $_GET['country'] : "";
