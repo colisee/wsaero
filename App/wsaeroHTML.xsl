@@ -107,14 +107,13 @@
 	        <xsl:element name="p">
             <xsl:text>Data provided by </xsl:text>
             <xsl:element name="a">
-              <xsl:attribute name="href">http://weather.aero</xsl:attribute>
-              <xsl:text>Weather.aero</xsl:text>
+              <xsl:attribute name="href">https://aviationweather.gov</xsl:attribute>
+              <xsl:text>Aviation weather</xsl:text>
             </xsl:element>
             <xsl:element name="br" />
-            <xsl:text>Developped by </xsl:text>
             <xsl:element name="a">
-              <xsl:attribute name="href">https://colisee.github.io</xsl:attribute>
-              <xsl:text>Robin Alexander</xsl:text>
+              <xsl:attribute name="href">https://github.com/colisee/wsaero</xsl:attribute>
+              <xsl:text>Source code</xsl:text>
             </xsl:element>
 	        </xsl:element>
         </xsl:element>
